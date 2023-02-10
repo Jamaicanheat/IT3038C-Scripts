@@ -1,0 +1,13 @@
+function getIp{ (get-netipaddress).ipv4address | Select-String "192.*"
+}
+
+$IP = getIP
+$USER = $env:COMPUTERNAME 
+$VERSION = $HOST.Version.Major
+$DATE_S =Get-Date -Format "dddd, MMMM, dd, yyyy"
+
+Write-Host("This is this machine's IP : $IP")
+$BODY = ("This machine IP is $IP, the user is $USER. Hotsname is $HOSTNAME, Powershell version is SPS")
+
+
+Send-MailMessage -To "leonardf@mail.uc.edu" -From "leckywayne@gmail.com" -Subject "IT3038C Windows SysInfo" -Body $BODY -SmtpServer smtp.gmail.com -port 587 -UseSSL -Credential (Get-Credential)
