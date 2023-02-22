@@ -1,0 +1,22 @@
+word = input("Enter a word: ")
+
+# initialize counters
+letter_count = 0
+vowel_count = 0
+consonant_count = 0
+
+# loop through each character in the word
+for char in word:
+    # increment letter count
+    letter_count += 1
+    # check if the character is a vowel
+    if char in 'aeiouAEIOU':
+        vowel_count += 1
+    # check if the character is a consonant
+    elif char.isalpha():
+        consonant_count += 1
+
+# print the results
+print("Number of letters:", letter_count)
+print("Number of vowels:", vowel_count)
+print("Number of consonants:", consonant_count)
