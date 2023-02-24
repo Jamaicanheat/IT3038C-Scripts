@@ -1,0 +1,66 @@
+import http.server
+import socketserver
+import socket
+import psutil
+import json
+import time
+
+PORT = 3000
+
+
+class MyHandler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            hostname = socket.gethostname()
+            ip = get_ip_address()
+            uptime = get_uptime()
+            memory = get_memory_usage()
+            cpu_count = psutil.cpu_count()
+
+            data = {
+                'hostname': hostname,
+                'ip': ip,
+                'uptime': uptime,
+                'memory': memory,
+                'cpuCount': cpu_count
+            }
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps(data).encode())
+        else:
+            super().do_GET()
+
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    ip_address = s.getsockname()[0]
+    s.close()
+    return ip_address
+
+
+def get_uptime():
+    uptime = time.time() - psutil.boot_time()
+    days = int(uptime // (24 * 3600))
+    hours = int((uptime % (24 * 3600)) // 3600)
+    minutes = int((uptime % 3600) // 60)
+    seconds = int(uptime % 60)
+    return f'{days} days, {hours} hours, {minutes} minutes, {seconds} seconds'
+
+
+def get_memory_usage():
+    mem = psutil.virtual_memory()
+    total_memory = round(mem.total / (1024 * 1024))
+    free_memory = round(mem.available / (1024 * 1024))
+    return {
+        'total_memory': f'{total_memory} MB',
+        'free_memory': f'{free_memory} MB'
+    }
+
+
+Handler = MyHandler
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print(f"Serving at port {PORT}")
+    httpd.serve_forever()
