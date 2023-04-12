@@ -1,0 +1,27 @@
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def home():
+    return 'Hello, My name is Wayne Lecky. <h> The semester is almost at an end and I an excited.<h>'
+
+
+@app.route('/about')
+def about():
+    return 'This is a simple Flask web app.'
+
+
+@app.route('/greet/<name>')
+def greet(name):
+    return f'Hello, {name}!'
+
+
+@app.route('/template')
+def template():
+    return render_template('template.html')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
